@@ -1,48 +1,34 @@
 import PlaceContentCenter from "./components/PlaceContentCenter";
-import Input from "./components/Input";
-import Button from "./components/Button";
-import { useEffect, useState } from "react";
-import axios from 'axios';
 import Card from "./components/Card";
+import useJoke from "./hooks/useJoke";
+import Button from "./components/Button";
+import Input from "./components/Input";
+import { useRef, useState } from "react";
 
 const App = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const nameRef = useRef('');
+  const [name, setName] = useState('Alex');
+  const joke = useJoke(name);
 
-  useEffect(() => {
-    const getUsers = async() => {
-      setLoading(true);
-      try {
-        const {data} = await axios('https://jsonplaceholder.typicode.com/users');
-        setUsers(data);
-        setLoading(false);
-      } catch(error){
-        console.log('Something went wrong.');
-        setLoading(false);
-      }
-      
-    }
-
-    getUsers();
-  }, []);
+  const generateJoke = (e) => {
+    e.preventDefault();
+    setName(nameRef.current.value);
+  }
 
   return( 
     <PlaceContentCenter>
      <Card>
-      <Card.Title>Users: {users.length}</Card.Title>
+      <Card.Title>Joke</Card.Title>
       <Card.Body>
-        {loading ? 'Loading...' : users.length ?
-        <ol>
-          {users.map((user) => (
-            <li key={user.id}>{user.name} ({user.username})</li>
-          ))}
-        </ol> : 
-        <div>
-          There are no users.
-        </div>
-        }
-        
+        <p className={'mb-4'}>
+          {joke.value}
+        </p>
+
+        <Input ref={nameRef} />
       </Card.Body>
+      <Card.Footer>
+        <Button onClick={generateJoke} className={'bg-black'}>Generate a Joke</Button>
+      </Card.Footer>
      </Card>
     </PlaceContentCenter>
   )
