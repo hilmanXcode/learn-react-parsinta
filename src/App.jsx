@@ -1,37 +1,43 @@
+import { useEffect, useState } from "react";
 import PlaceContentCenter from "./components/PlaceContentCenter";
-import Card from "./components/Card";
-import { useRef, useState } from "react";
-import Button from "./components/Button";
 import Input from "./components/Input";
+import Button from "./components/Button";
 
 const App = () => {
-  // const inputRef = useRef(null);
-  // const tick = useRef(0);
-  // const [tick, setTick] = useState(0);
+  const [name, setName] = useState('');
+  const [online, setOnline] = useState(false);
 
-  const handleClick = () => {
-    // inputRef.current.focus();
-    // tick.current = tick.current + 1;
+  // useEffect ini akan terus di render ketika ada nya perubahan 
+  useEffect(() => {
+    console.log('Im always rendered.');
+  });
+  
+  // useEffect ini hanya akan di render pada page pertama kali di buka
+  useEffect(() => {
+    console.log('Im rendered at first time');
+  }, []);
 
-    // console.log(tick.current);
-    // const nextTick = tick +1;
-    // setTick(nextTick);
-    // console.log(nextTick);
+  // useEffect ini akan terpanggil jika terjadi perubahan di props / variabel yang kita definisikan di deps[]
+  useEffect(() => {
+    console.log(`Im now ${online ? 'online' : 'offline'}`)
+  }, [online]);
+
+  const onKeyDown = (e) => {
+    console.log(e.code);
   }
+
+  // useEffect ini digunakan untuk cleanup(try to see the difference)  
+  useEffect(() => {
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    }
+  })
 
   return( 
     <PlaceContentCenter>
-      <Card>
-        <Card.Title>useRef Hooks</Card.Title>
-        <Card.Body>
-          <Input isFocused placeholder={"Email"} />
-          <Input placeholder={"Password"} />
-          <Button className={'bg-black'} onClick={handleClick}>Tick</Button>
-        </Card.Body>
-        <Card.Footer>
-          {/* You clicked {tick.current} times. */}
-        </Card.Footer>
-      </Card>
+      <Input name={'name'} type="text" value={name} onChange={(e) => setName(e.target.value)}/>
+      <Button onClick={() => setOnline(online => !online)} className={'bg-black'}>Toggle Online</Button>
     </PlaceContentCenter>
   )
 
